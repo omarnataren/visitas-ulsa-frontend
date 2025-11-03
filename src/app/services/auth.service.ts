@@ -8,28 +8,24 @@ export class AuthService {
   private currentUserSignal = signal<Usuario | null>(null);
   currentUser = this.currentUserSignal.asReadonly();
 
-  // Datos mock
-  private mockUsers: Usuario[] = [
-    {
-      id: 1,
-      nombre: 'Administrador del Sistema',
-      correo: 'admin@lasalle.mx',
-      rol: 'admin_sistema'
-    },
-    {
-      id: 2,
-      nombre: 'Coordinador Académico',
-      correo: 'coordinador@lasalle.mx',
-      rol: 'admin_universitario'
+  // Login simplificado - sin endpoint de autenticación en el backend
+  async login(correo: string, contrasena: string): Promise<boolean> {
+    try {
+      // Simular login exitoso y guardar usuario mock
+      const mockUser: Usuario = {
+        id: 1,
+        nombre: 'Usuario Admin',
+        correo: correo,
+        rol: 'admin_sistema'
+      };
+      
+      this.currentUserSignal.set(mockUser);
+      localStorage.setItem('currentUser', JSON.stringify(mockUser));
+      return true;
+    } catch (error) {
+      console.error('Error en login:', error);
+      return false;
     }
-  ];
-
-  login(correo: string, contrasena: string): boolean {
-    // Login mock - acepta cualquier usuario
-    const user = this.mockUsers[0];
-    this.currentUserSignal.set(user);
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    return true;
   }
 
   logout(): void {

@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CitasService } from '../../services/citas.service';
@@ -12,9 +12,10 @@ import { Cita } from '../../models/cita.model';
   templateUrl: './citas.component.html',
   styleUrls: ['./citas.component.css']
 })
-export class CitasComponent {
+export class CitasComponent implements OnInit {
   showForm = signal(false);
   editingId = signal<number | null>(null);
+  loading = signal(false);
 
   formData = signal<Partial<Cita>>({
     visitante_id: 0,
@@ -35,6 +36,15 @@ export class CitasComponent {
     private citasService: CitasService,
     private visitantesService: VisitantesService
   ) {}
+
+  async ngOnInit() {
+    this.loading.set(true);
+    await Promise.all([
+      this.citasService.loadCitas(),
+      this.visitantesService.loadVisitantes()
+    ]);
+    this.loading.set(false);
+  }
 
   get citas() {
     return this.citasService.citas;
@@ -86,35 +96,57 @@ export class CitasComponent {
     });
   }
 
-  saveCita(): void {
+  async saveCita(): Promise<void> {
     const data = this.formData();
     if (!data.visitante_id || !data.hora || !data.persona_a_visitar) {
       alert('Complete los campos requeridos');
       return;
     }
 
+    this.loading.set(true);
     const editId = this.editingId();
+    let success = false;
+
     if (editId) {
-      this.citasService.updateCita(editId, data);
+      success = await this.citasService.updateCita(editId, data);
     } else {
-      this.citasService.addCita(data as Omit<Cita, 'id' | 'creado_en'>);
+      const result = await this.citasService.addCita(data as Omit<Cita, 'id' | 'creado_en'>);
+      success = result !== null;
     }
 
-    this.closeForm();
+    this.loading.set(false);
+
+    if (success) {
+      this.closeForm();
+    } else {
+      alert('Error al guardar la cita. Por favor intente de nuevo.');
+    }
   }
 
-  deleteCita(id: number): void {
+  async deleteCita(id: number): Promise<void> {
     if (confirm('¿Está seguro de eliminar esta cita?')) {
-      this.citasService.deleteCita(id);
+      this.loading.set(true);
+      const success = await this.citasService.deleteCita(id);
+      this.loading.set(false);
+
+      if (!success) {
+        alert('Error al eliminar la cita. Por favor intente de nuevo.');
+      }
     }
   }
 
-  reagendarCita(cita: Cita): void {
+  async reagendarCita(cita: Cita): Promise<void> {
     const nuevaFecha = prompt('Nueva fecha (YYYY-MM-DD):', cita.fecha.toString().split('T')[0]);
     const nuevaHora = prompt('Nueva hora (HH:MM):', cita.hora);
     
     if (nuevaFecha && nuevaHora) {
-      this.citasService.reagendarCita(cita.id, new Date(nuevaFecha), nuevaHora);
+      this.loading.set(true);
+      const success = await this.citasService.reagendarCita(cita.id, new Date(nuevaFecha), nuevaHora);
+      this.loading.set(false);
+
+      if (!success) {
+        alert('Error al reagendar la cita. Por favor intente de nuevo.');
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VisitantesService } from '../../services/visitantes.service';
@@ -11,9 +11,10 @@ import { Visitante } from '../../models/visitante.model';
   templateUrl: './visitantes.component.html',
   styleUrls: ['./visitantes.component.css']
 })
-export class VisitantesComponent {
+export class VisitantesComponent implements OnInit {
   showForm = signal(false);
   editingId = signal<number | null>(null);
+  loading = signal(false);
 
   formData = signal<Partial<Visitante>>({
     nombre: '',
@@ -25,6 +26,12 @@ export class VisitantesComponent {
   });
 
   constructor(private visitantesService: VisitantesService) {}
+
+  async ngOnInit() {
+    this.loading.set(true);
+    await this.visitantesService.loadVisitantes();
+    this.loading.set(false);
+  }
 
   get visitantes() {
     return this.visitantesService.visitantes;
@@ -59,26 +66,42 @@ export class VisitantesComponent {
     });
   }
 
-  saveVisitante(): void {
+  async saveVisitante(): Promise<void> {
     const data = this.formData();
     if (!data.nombre) {
       alert('El nombre es requerido');
       return;
     }
 
+    this.loading.set(true);
     const editId = this.editingId();
+    let success = false;
+
     if (editId) {
-      this.visitantesService.updateVisitante(editId, data);
+      success = await this.visitantesService.updateVisitante(editId, data);
     } else {
-      this.visitantesService.addVisitante(data as Omit<Visitante, 'id' | 'creado_en'>);
+      const result = await this.visitantesService.addVisitante(data as Omit<Visitante, 'id' | 'creado_en'>);
+      success = result !== null;
     }
 
-    this.closeForm();
+    this.loading.set(false);
+
+    if (success) {
+      this.closeForm();
+    } else {
+      alert('Error al guardar el visitante. Por favor intente de nuevo.');
+    }
   }
 
-  deleteVisitante(id: number): void {
+  async deleteVisitante(id: number): Promise<void> {
     if (confirm('¿Está seguro de eliminar este visitante?')) {
-      this.visitantesService.deleteVisitante(id);
+      this.loading.set(true);
+      const success = await this.visitantesService.deleteVisitante(id);
+      this.loading.set(false);
+
+      if (!success) {
+        alert('Error al eliminar el visitante. Por favor intente de nuevo.');
+      }
     }
   }
 }

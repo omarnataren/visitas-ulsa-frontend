@@ -1,92 +1,134 @@
 import { Injectable, signal } from '@angular/core';
 import { Cita } from '../models/cita.model';
+import api from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CitasService {
-  private citasSignal = signal<Cita[]>([
-    {
-      id: 1,
-      visitante_id: 1,
-      usuario_id: 1,
-      fecha: new Date('2025-11-03'),
-      hora: '10:00',
-      persona_a_visitar: 'Dr. Carlos Mendoza',
-      area: 'Dirección Académica',
-      medio_ingreso: 'peatonal',
-      estado: 'programada',
-      creado_en: new Date('2025-10-28')
-    },
-    {
-      id: 2,
-      visitante_id: 2,
-      usuario_id: 2,
-      fecha: new Date('2025-11-04'),
-      hora: '14:30',
-      persona_a_visitar: 'Lic. Ana Patricia Ruiz',
-      area: 'Recursos Humanos',
-      medio_ingreso: 'vehicular',
-      marca_vehiculo: 'Toyota',
-      modelo_vehiculo: 'Corolla',
-      color_vehiculo: 'Gris',
-      placas_vehiculo: 'ABC-123-D',
-      estado: 'programada',
-      creado_en: new Date('2025-10-29')
-    },
-    {
-      id: 3,
-      visitante_id: 3,
-      usuario_id: 1,
-      fecha: new Date('2025-11-05'),
-      hora: '09:00',
-      persona_a_visitar: 'Mtro. Luis Fernando Gómez',
-      area: 'Coordinación de Ingeniería',
-      medio_ingreso: 'vehicular',
-      marca_vehiculo: 'Nissan',
-      modelo_vehiculo: 'Sentra',
-      color_vehiculo: 'Azul',
-      placas_vehiculo: 'XYZ-456-A',
-      estado: 'programada',
-      creado_en: new Date('2025-10-31')
-    }
-  ]);
-
+  private citasSignal = signal<Cita[]>([]);
   citas = this.citasSignal.asReadonly();
+
+  async loadCitas(): Promise<void> {
+    try {
+      const response = await api.get('/citas');
+      this.citasSignal.set(response.data);
+    } catch (error) {
+      console.error('Error cargando citas:', error);
+    }
+  }
 
   getCitas(): Cita[] {
     return this.citasSignal();
   }
 
-  getCita(id: number): Cita | undefined {
-    return this.citasSignal().find(c => c.id === id);
+  async getCita(id: number): Promise<Cita | null> {
+    try {
+      const response = await api.get(`/citas/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error obteniendo cita:', error);
+      return null;
+    }
   }
 
-  addCita(cita: Omit<Cita, 'id' | 'creado_en'>): Cita {
-    const newCita: Cita = {
-      ...cita,
-      id: Math.max(...this.citasSignal().map(c => c.id), 0) + 1,
-      creado_en: new Date()
-    };
-    this.citasSignal.update(citas => [...citas, newCita]);
-    return newCita;
+  async addCita(cita: Omit<Cita, 'id' | 'creado_en'>): Promise<Cita | null> {
+    try {
+      // Convertir campos al formato camelCase del backend
+      const backendData = {
+        visitanteId: cita.visitante_id,
+        usuarioId: cita.usuario_id,
+        fecha: cita.fecha,
+        hora: cita.hora,
+        personaAVisitar: cita.persona_a_visitar,
+        area: cita.area,
+        medioIngreso: cita.medio_ingreso,
+        marcaVehiculo: cita.marca_vehiculo,
+        modeloVehiculo: cita.modelo_vehiculo,
+        colorVehiculo: cita.color_vehiculo,
+        placasVehiculo: cita.placas_vehiculo
+      };
+      
+      const response = await api.post('/citas', backendData);
+      const newCita = response.data;
+      this.citasSignal.update(citas => [...citas, newCita]);
+      return newCita;
+    } catch (error) {
+      console.error('Error creando cita:', error);
+      return null;
+    }
   }
 
-  updateCita(id: number, cita: Partial<Cita>): void {
-    this.citasSignal.update(citas =>
-      citas.map(c => c.id === id ? { ...c, ...cita } : c)
-    );
+  async updateCita(id: number, cita: Partial<Cita>): Promise<boolean> {
+    try {
+      // Convertir campos al formato camelCase del backend
+      const backendData: any = {};
+      if (cita.visitante_id !== undefined) backendData.visitanteId = cita.visitante_id;
+      if (cita.usuario_id !== undefined) backendData.usuarioId = cita.usuario_id;
+      if (cita.fecha !== undefined) backendData.fecha = cita.fecha;
+      if (cita.hora !== undefined) backendData.hora = cita.hora;
+      if (cita.persona_a_visitar !== undefined) backendData.personaAVisitar = cita.persona_a_visitar;
+      if (cita.area !== undefined) backendData.area = cita.area;
+      if (cita.medio_ingreso !== undefined) backendData.medioIngreso = cita.medio_ingreso;
+      if (cita.marca_vehiculo !== undefined) backendData.marcaVehiculo = cita.marca_vehiculo;
+      if (cita.modelo_vehiculo !== undefined) backendData.modeloVehiculo = cita.modelo_vehiculo;
+      if (cita.color_vehiculo !== undefined) backendData.colorVehiculo = cita.color_vehiculo;
+      if (cita.placas_vehiculo !== undefined) backendData.placasVehiculo = cita.placas_vehiculo;
+      if (cita.estado !== undefined) backendData.estado = cita.estado;
+      
+      const response = await api.put(`/citas/${id}`, backendData);
+      const updatedCita = response.data;
+      this.citasSignal.update(citas =>
+        citas.map(c => c.id === id ? updatedCita : c)
+      );
+      return true;
+    } catch (error) {
+      console.error('Error actualizando cita:', error);
+      return false;
+    }
   }
 
-  deleteCita(id: number): void {
-    this.citasSignal.update(citas => citas.filter(c => c.id !== id));
+  async deleteCita(id: number): Promise<boolean> {
+    try {
+      await api.delete(`/citas/${id}`);
+      this.citasSignal.update(citas => citas.filter(c => c.id !== id));
+      return true;
+    } catch (error) {
+      console.error('Error eliminando cita:', error);
+      return false;
+    }
   }
 
-  reagendarCita(id: number, nuevaFecha: Date, nuevaHora: string): void {
-    this.updateCita(id, {
-      fecha: nuevaFecha,
-      hora: nuevaHora,
-      estado: 'reagendada'
-    });
+  async updateEstadoCita(id: number, estado: string): Promise<boolean> {
+    try {
+      const response = await api.patch(`/citas/${id}/estado`, { estado });
+      const updatedCita = response.data;
+      this.citasSignal.update(citas =>
+        citas.map(c => c.id === id ? updatedCita : c)
+      );
+      return true;
+    } catch (error) {
+      console.error('Error actualizando estado de cita:', error);
+      return false;
+    }
+  }
+
+  async reagendarCita(id: number, nuevaFecha: Date, nuevaHora: string): Promise<boolean> {
+    try {
+      const backendData = {
+        fecha: nuevaFecha,
+        hora: nuevaHora,
+        estado: 'REAGENDADA'
+      };
+      const response = await api.put(`/citas/${id}`, backendData);
+      const updatedCita = response.data;
+      this.citasSignal.update(citas =>
+        citas.map(c => c.id === id ? updatedCita : c)
+      );
+      return true;
+    } catch (error) {
+      console.error('Error reagendando cita:', error);
+      return false;
+    }
   }
 }

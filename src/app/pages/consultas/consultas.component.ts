@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CitasService } from '../../services/citas.service';
@@ -11,7 +11,8 @@ import { VisitantesService } from '../../services/visitantes.service';
   templateUrl: './consultas.component.html',
   styleUrls: ['./consultas.component.css']
 })
-export class ConsultasComponent {
+export class ConsultasComponent implements OnInit {
+  loading = signal(false);
   filtros = signal({
     fechaInicio: '',
     fechaFin: '',
@@ -24,6 +25,15 @@ export class ConsultasComponent {
     private citasService: CitasService,
     private visitantesService: VisitantesService
   ) {}
+
+  async ngOnInit() {
+    this.loading.set(true);
+    await Promise.all([
+      this.citasService.loadCitas(),
+      this.visitantesService.loadVisitantes()
+    ]);
+    this.loading.set(false);
+  }
 
   get citas() {
     return this.citasService.citas;
