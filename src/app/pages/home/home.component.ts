@@ -1,0 +1,18 @@
+import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [RouterModule],
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
+})
+export class HomeComponent {
+  stats = {
+    visitantesRegistrados: 127,
+    citasProgramadas: 15,
+    citasHoy: 8,
+    citasReagendadas: 3
+  };
+}

@@ -1,0 +1,128 @@
+<div class="visitantes-container">
+  <div class="page-header">
+    <h1>Gestión de Visitantes</h1>
+    <button class="btn-primary" (click)="openForm()">
+      Nuevo Visitante
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre Completo</th>
+          <th>Género</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>INE</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (visitante of visitantes(); track visitante.id) {
+          <tr>
+            <td>{{ visitante.id }}</td>
+            <td>{{ visitante.nombre }}</td>
+            <td>{{ visitante.genero || '-' }}</td>
+            <td>{{ visitante.correo || '-' }}</td>
+            <td>{{ visitante.telefono || '-' }}</td>
+            <td>{{ visitante.ine || '-' }}</td>
+            <td class="actions">
+              <button class="btn-icon btn-edit" (click)="editVisitante(visitante)" title="Editar">
+                Editar
+              </button>
+              <button class="btn-icon btn-delete" (click)="deleteVisitante(visitante.id)" title="Eliminar">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="empty-state">
+              No hay visitantes registrados
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Form -->
+@if (showForm()) {
+  <div class="modal-overlay" (click)="closeForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editingId() ? 'Editar Visitante' : 'Nuevo Visitante' }}</h2>
+        <button class="btn-close" (click)="closeForm()">✕</button>
+      </div>
+
+      <form class="form-grid" (submit)="$event.preventDefault(); saveVisitante()">
+        <div class="form-group">
+          <label>Nombre Completo *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="formData().nombre"
+            name="nombre"
+            required
+            placeholder="Nombre completo del visitante">
+        </div>
+
+        <div class="form-group">
+          <label>Género</label>
+          <select [(ngModel)]="formData().genero" name="genero">
+            <option value="">Seleccionar</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Fecha de Nacimiento</label>
+          <input 
+            type="date" 
+            [(ngModel)]="formData().fecha_nacimiento"
+            name="fecha_nacimiento">
+        </div>
+
+        <div class="form-group">
+          <label>INE</label>
+          <input 
+            type="text" 
+            [(ngModel)]="formData().ine"
+            name="ine"
+            placeholder="Número de INE">
+        </div>
+
+        <div class="form-group">
+          <label>Correo Electrónico</label>
+          <input 
+            type="email" 
+            [(ngModel)]="formData().correo"
+            name="correo"
+            placeholder="correo@ejemplo.com">
+        </div>
+
+        <div class="form-group">
+          <label>Número Celular</label>
+          <input 
+            type="tel" 
+            [(ngModel)]="formData().telefono"
+            name="telefono"
+            placeholder="951 123 4567">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="closeForm()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-primary">
+            {{ editingId() ? 'Actualizar' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

@@ -1,0 +1,76 @@
+<div class="home-container">
+  <div class="welcome-section">
+    <h1>Bienvenido al Sistema de Gestión de Visitas</h1>
+    <p>Universidad La Salle Oaxaca</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="stat-icon"></div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.visitantesRegistrados }}</div>
+        <div class="stat-label">Visitantes Registrados</div>
+      </div>
+    </div>
+
+    <div class="stat-card green">
+      <div class="stat-icon"></div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.citasProgramadas }}</div>
+        <div class="stat-label">Citas Programadas</div>
+      </div>
+    </div>
+
+    <div class="stat-card orange">
+      <div class="stat-icon"></div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.citasHoy }}</div>
+        <div class="stat-label">Citas para Hoy</div>
+      </div>
+    </div>
+
+    <div class="stat-card purple">
+      <div class="stat-icon"></div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.citasReagendadas }}</div>
+        <div class="stat-label">Citas Reagendadas</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <h2>Acciones Rápidas</h2>
+    <div class="actions-grid">
+      <a routerLink="/dashboard/visitantes" class="action-card">
+        <div class="action-title">Registrar Visitante</div>
+        <div class="action-description">Agregar nuevo visitante al sistema</div>
+      </a>
+
+      <a routerLink="/dashboard/citas" class="action-card">
+        <div class="action-title">Nueva Cita</div>
+        <div class="action-description">Programar una visita externa</div>
+      </a>
+
+      <a routerLink="/dashboard/consultas" class="action-card">
+        <div class="action-title">Consultar Citas</div>
+        <div class="action-description">Ver y filtrar citas programadas</div>
+      </a>
+
+      <a routerLink="/dashboard/notificaciones" class="action-card">
+        <div class="action-title">Notificaciones</div>
+        <div class="action-description">Enviar correos automáticos</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-card">
+      <h3>Sobre el Sistema</h3>
+      <p>
+        Sistema de gestión de visitas externas para la Universidad La Salle Oaxaca. 
+        Permite registrar visitantes, programar citas, gestionar el ingreso y enviar 
+        notificaciones automáticas por correo electrónico.
+      </p>
+    </div>
+  </div>
+</div>

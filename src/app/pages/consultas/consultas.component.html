@@ -1,0 +1,131 @@
+<div class="consultas-container">
+  <div class="page-header">
+    <h1>Consulta de Citas</h1>
+    <div class="export-buttons">
+      <button class="btn-export" (click)="exportarPDF()">Exportar PDF</button>
+      <button class="btn-export" (click)="exportarExcel()">Exportar Excel</button>
+    </div>
+  </div>
+
+  <div class="filters-card">
+    <h3>Filtros de Búsqueda</h3>
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Fecha Inicio</label>
+        <input 
+          type="date" 
+          [value]="filtros().fechaInicio"
+          (input)="updateFiltro('fechaInicio', $any($event.target).value)">
+      </div>
+
+      <div class="filter-group">
+        <label>Fecha Fin</label>
+        <input 
+          type="date" 
+          [value]="filtros().fechaFin"
+          (input)="updateFiltro('fechaFin', $any($event.target).value)">
+      </div>
+
+      <div class="filter-group">
+        <label>Visitante</label>
+        <input 
+          type="text" 
+          [value]="filtros().visitante"
+          (input)="updateFiltro('visitante', $any($event.target).value)"
+          placeholder="Buscar por nombre">
+      </div>
+
+      <div class="filter-group">
+        <label>Área</label>
+        <input 
+          type="text" 
+          [value]="filtros().area"
+          (input)="updateFiltro('area', $any($event.target).value)"
+          placeholder="Buscar por área">
+      </div>
+
+      <div class="filter-group">
+        <label>Estado</label>
+        <select 
+          [value]="filtros().estado"
+          (change)="updateFiltro('estado', $any($event.target).value)">
+          <option value="">Todos</option>
+          <option value="programada">Programada</option>
+          <option value="reagendada">Reagendada</option>
+          <option value="finalizada">Finalizada</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn-clear" (click)="limpiarFiltros()">Limpiar Filtros</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-info">
+    <p>Mostrando <strong>{{ citasFiltradas().length }}</strong> resultado(s)</p>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Visitante</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Persona a Visitar</th>
+          <th>Área</th>
+          <th>Medio Ingreso</th>
+          <th>Detalles Vehículo</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (cita of citasFiltradas(); track cita.id) {
+          <tr>
+            <td>{{ cita.id }}</td>
+            <td>
+              <div class="visitante-info">
+                <strong>{{ cita.visitante?.nombre || 'N/A' }}</strong>
+                @if (cita.visitante?.correo) {
+                  <small>{{ cita.visitante?.correo }}</small>
+                }
+              </div>
+            </td>
+            <td>{{ cita.fecha | date:'dd/MM/yyyy' }}</td>
+            <td>{{ cita.hora }}</td>
+            <td>{{ cita.persona_a_visitar }}</td>
+            <td>{{ cita.area || '-' }}</td>
+            <td>
+              <span class="badge" [class.badge-blue]="cita.medio_ingreso === 'vehicular'">
+                {{ cita.medio_ingreso }}
+              </span>
+            </td>
+            <td>
+              @if (cita.medio_ingreso === 'vehicular') {
+                <div class="vehiculo-info">
+                  <small>{{ cita.marca_vehiculo }} {{ cita.modelo_vehiculo }}</small>
+                  <small>{{ cita.color_vehiculo }} - {{ cita.placas_vehiculo }}</small>
+                </div>
+              } @else {
+                <span class="text-muted">-</span>
+              }
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getEstadoBadgeClass(cita.estado)">
+                {{ cita.estado }}
+              </span>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="9" class="empty-state">
+              No se encontraron citas con los filtros seleccionados
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

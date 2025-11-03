@@ -1,0 +1,152 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #003976;
+  padding: 20px;
+}
+
+.login-box {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 450px;
+  overflow: hidden;
+}
+
+.logo-section {
+  background: #003976;
+  color: white;
+  padding: 40px 30px;
+  text-align: center;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo-circle {
+  width: 80px;
+  height: 80px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-text {
+  font-size: 28px;
+  font-weight: 700;
+  color: #003976;
+}
+
+.system-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 15px 0 8px 0;
+}
+
+.university-name {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.login-form {
+  padding: 40px 30px;
+}
+
+.login-form h2 {
+  color: #003976;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+  margin: 0 0 30px 0;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 16px;
+  background: #003976;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+  background: #00558f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 57, 118, 0.4);
+}
+
+.btn-login:active {
+  transform: translateY(0);
+}
+
+.info-section {
+  margin-top: 30px;
+  padding: 15px;
+  background: #f5f9fc;
+  border-left: 3px solid #1976d2;
+  border-radius: 4px;
+}
+
+.info-text {
+  color: #555;
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.login-footer {
+  text-align: center;
+  color: white;
+  margin-top: 30px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.login-footer p {
+  margin: 5px 0;
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .logo-section {
+    padding: 30px 20px;
+  }
+
+  .system-title {
+    font-size: 20px;
+  }
+
+  .login-form {
+    padding: 30px 20px;
+  }
+
+  .login-form h2 {
+    font-size: 24px;
+  }
+}

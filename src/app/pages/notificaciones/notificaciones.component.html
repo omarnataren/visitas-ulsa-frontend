@@ -1,0 +1,112 @@
+<div class="notificaciones-container">
+  <div class="page-header">
+    <h1>Notificaciones por Correo Electrónico</h1>
+  </div>
+
+  <div class="info-card">
+    <div class="info-content">
+      <h3>Notificaciones Automáticas</h3>
+      <p>
+        Al registrar una nueva cita, el sistema envía automáticamente correos electrónicos a:
+      </p>
+      <ul>
+        <li><strong>seguridad&#64;gmail.com</strong> - Área de seguridad</li>
+        <li><strong>Administrador que registró la cita</strong></li>
+        <li><strong>Persona que será visitada</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="notification-preview">
+    <h2>Vista Previa del Correo</h2>
+    
+    <div class="email-card">
+      <div class="email-header">
+        <h3>Nueva Visita Programada - Universidad La Salle Oaxaca</h3>
+      </div>
+      
+      <div class="email-body">
+        <p>Estimado/a [Destinatario],</p>
+        
+        <p>Se ha programado una nueva visita externa con los siguientes detalles:</p>
+        
+        <div class="details-section">
+          <h4>Datos del Visitante</h4>
+          <table class="details-table">
+            <tr>
+              <td class="label">Nombre:</td>
+              <td>[Nombre del Visitante]</td>
+            </tr>
+            <tr>
+              <td class="label">INE:</td>
+              <td>[INE]</td>
+            </tr>
+            <tr>
+              <td class="label">Teléfono:</td>
+              <td>[Teléfono]</td>
+            </tr>
+            <tr>
+              <td class="label">Correo:</td>
+              <td>[Correo]</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="details-section">
+          <h4>Datos de la Visita</h4>
+          <table class="details-table">
+            <tr>
+              <td class="label">Fecha:</td>
+              <td>[Fecha]</td>
+            </tr>
+            <tr>
+              <td class="label">Hora:</td>
+              <td>[Hora]</td>
+            </tr>
+            <tr>
+              <td class="label">Persona a Visitar:</td>
+              <td>[Nombre]</td>
+            </tr>
+            <tr>
+              <td class="label">Área/Departamento:</td>
+              <td>[Área]</td>
+            </tr>
+            <tr>
+              <td class="label">Medio de Ingreso:</td>
+              <td>[Peatonal/Vehículo]</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="details-section">
+          <h4>Condiciones de Ingreso</h4>
+          <table class="details-table">
+            <tr>
+              <td class="label">Tipo:</td>
+              <td>[A pie / En vehículo]</td>
+            </tr>
+            <tr>
+              <td class="label">Vehículo:</td>
+              <td>[Marca, Modelo, Color, Placas]</td>
+            </tr>
+          </table>
+        </div>
+
+        <p class="footer-text">
+          Este correo es generado automáticamente por el Sistema de Gestión de Visitas.
+          <br>
+          Universidad La Salle Oaxaca
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-section">
+    <button class="btn-primary" (click)="enviarNotificacion()">
+      Enviar Notificaciones de Prueba
+    </button>
+    <p class="note">
+      Nota: Las notificaciones se envían automáticamente al registrar o modificar citas.
+    </p>
+  </div>
+</div>
